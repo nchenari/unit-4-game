@@ -1,18 +1,9 @@
 $(document).ready(function() {
     // -------------------------- game variables ---------------------------
     
-
-    // ----- state variables ---------
-    var playerSelected = false; 
-    var enemySelected = false;
-    var attackPower = 1; // increments by 1 every attack
-
-    var userPlayer;
-    var enemyPlayer;
-
     // ---- players -------------------
     // player object constructor
-    function Player(name, health, defendingDamage, attackDamage) {
+    function Player(name, health, defendingDamage) {
         this.name = name;
         this.health = health;
         this.defendingDamage = defendingDamage;
@@ -21,62 +12,94 @@ $(document).ready(function() {
         }
     }
 
-    var obiWanKenobi = {
-        name: "Obi-Wan Kenobi",
-        health: 120,
-        defendingDamage: 8,
-        attackDamage: 8 
-    };
+    // players
+    var obiWanKenobi = new Player("Obi-Wan Kenobi", 120, 8);
+    var lukeSkywalker = new Player("Luke Skywalker", 100, 5);
+    var darthSidious = new Player("Darth Sidious", 150, 20);
+    var darthMaul = new Player("Darth Maul", 180, 25);
 
-    var lukeSkywalker = {
-        name: "Luke Skywalker",
-        health: 100,
-        defendingDamage: 5,
-        attackDamage: 5
-    };
+    // ----- state variables ---------
+    var playerSelected = false; 
+    var enemySelected = false;
+    var attackPower = 1; // increments by 1 after every attack
+    
+    var enemiesLeft = 3;
 
-    var darthSidious = {
-        name: "Darth Sidious",
-        health: 150,
-        defendingDamage: 20,
-        attackDamage: 20 
-    };
+    // reference to Player object
+    var userPlayer;
+    var enemyPlayer;
 
-    var darthMaul = {
-        name: "Darth Maul",
-        health: 180,
-        defendingDamage: 25,
-        attackDamage: 25 
-    };
+    // DOM to be manipulated in various locations by jQuery
+    var userElem; 
+    var enemyElem; 
 
     // ----- main logic -----
-    console.log("game.js read");
-
 
     $("#attack-btn").on("click", function() {
+        // fight logic here
+        if (playerSelected == true && enemySelected == true) {
 
+                // attack takes place
+                attack();
+
+                if (userPlayer.health >= 0 && enemyPlayer.health >= 0) {
+            
+                    // battle still on, set game info based on battle stats
+                    setGameInfo("You attacked " + enemyPlayer.name + " for " + userPlayer.attackDamage() + " damage." 
+                        + "\n" + enemyPlayer.name + " attacked you back for " + enemyPlayer.defendingDamage + " damage.");
+
+                } else if (userPlayer.health <= 0) { 
+
+                    // game lost
+                    gameLost();
+
+                } else if (enemyPlayer.health <= 0) { 
+
+                    // current enemy defeated
+                    enemyDefeated();
+
+                    if (enemiesLeft == 0) {
+                        gameWon();
+                    } else {
+                        // inform user of enemy defeat
+                        setGameInfo("You have defeated " + enemyPlayer.name + ", you can choose to fight another enemy.");
+                    }
+
+                }
+
+                // increment attackPower for next attack 
+                attackPower++;        
+        } else if (playerSelected == true && enemySelected == false){
+
+            // enemy not selected
+            setGameInfo("No enemy here.");
+        } else {
+
+            // player not selected 
+            setGameInfo("Please select a character!");
+        }
     });
 
     $("#reset-btn").on("click", function() {
-        // refresh/reload page to reset everyhting back to where they were
+        // refresh/reload page to reset everything back to where they were and at default values
         location.reload();
     });
 
     // select player 
     $("#char-group").on("click", ".char", function() {
-        console.log("selected player id: " + playerId);
-        var playerId = $(this).attr('id');
 
         // check if no user player is already selected
         if (playerSelected == false) {
-
+            // store user player element reference
+            userElem = $(this);
+            console.log("selected user player id: " + userElem.attr('id'));
             // move selection to your-char-area
-            $(this).appendTo("#your-char-area");
+            userElem.appendTo("#your-char-area");
             // move other players to enemeies-to-attack
             $("#char-group").appendTo("#enemies-to-attack");
 
             // assign player to user
-            userPlayer = matchFromId(playerId);
+            userPlayer = matchFromId(userElem.attr('id'));
 
             // set user player selected flag to true
             playerSelected = true;
@@ -85,53 +108,27 @@ $(document).ready(function() {
 
             // check if no enemy is selected
             if (enemySelected == false) {
-                
+                // store enemy player element reference
+                enemyElem = $(this);
+                console.log("selected enemy player id: " + enemyElem.attr('id'));
                 // move to defender-area to prepare for battle
-                $(this).appendTo("#defender-area")
+                enemyElem.appendTo("#defender-area");
+
+                // assign player to enemy
+                enemyPlayer = matchFromId(enemyElem.attr('id'));
 
                 // set enemy player selected flag to true
                 enemySelected = true;
                 console.log("user has selected an enemy to battle");
+
+                // clear game info
+                setGameInfo("");
             } else { // enemy player has already been selected
                 // do nothing
             }
         }
 
     });
-
-    
-
-
-
-
-    $("#char-group").on("click", "#obi-wan-kenobi", function() {
-        // console.log("Obi-Wan Kenobi clicked");
-        // // player selected
-        // playerSelected = true;
-        // console.log("player selected");
-
-        // // move to your-char-area
-        // $(this).appendTo("#your-char-area");
-        // // move everyone else to enemies-to-attack
-        // $("#char-group").appendTo("#enemies-to-attack");
-
-    }).on("click", "#luke-skywalker", function() {
-        if (playerSelected == true) {
-            // enemy selected
-            enemySelected = true;
-            console.log("enemy selected");
-            // Luke Skywalker is in Enemies Avaliable To Attack
-            // move to defender-area
-            $(this).appendTo("#defender-area");
-        }
-
-    }).on("click", "#darth-sidious", function() {
-
-    }).on("click", "#darth-maul", function() {
-
-    });
-
-    gameWon();
 
     // ------- functions ----------
     function matchFromId(id) {
@@ -143,17 +140,23 @@ $(document).ready(function() {
             case "darth-sidious":
                 return darthSidious;
             case "darth-maul":
-                return darthSidious;
+                return darthMaul;
             default: 
-                console.log("player could not be matched")   
+                console.log("player could not be matched");   
         }
     }
 
     function attack() {
-        
+        // update user and enemy health based on attack and defending damage
+        userPlayer.health -= enemyPlayer.defendingDamage;
+        console.log("user player health: " + userPlayer.health + " after " + enemyPlayer.defendingDamage + " damage from enemy");
+        enemyPlayer.health -= userPlayer.attackDamage();
+        console.log("enemy player health: " + enemyPlayer.health + " after " + userPlayer.attackDamage() + " damage from user");
 
-        // increase attackPower for next attack
-        attackPower++;
+        // update character boxes
+        userElem.find("health").text(userPlayer.health);
+
+
     }
 
 
@@ -161,8 +164,11 @@ $(document).ready(function() {
         console.log("enemy defeated");
 
         // remove defeated enemy from defender area
+        enemyElem.remove();
 
-
+        // reduce # players left
+        enemiesLeft--;
+        console.log("number of enemies left: " + enemiesLeft);
 
         // allow user to select a new enemy
         enemySelected = false;
@@ -175,14 +181,9 @@ $(document).ready(function() {
 
     function gameLost() {
         console.log("game lost");
-        
+        setGameInfo("You have been defeated...GAME OVER!!!");
     }
-
-    function matchWon() {
-        console.log("match won");
-        setGameInfo("You have defeated ______, you can choose to fight another enemy.");
-    }
-
+    
 
     function setGameInfo(str) {
         $("#game-info").text(str);
