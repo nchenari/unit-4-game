@@ -1,0 +1,39 @@
+#game-title {
+    text-align: right;
+    margin-right: 50px;
+    margin-bottom: 50px;
+}
+
+/* fix float left from char-box */
+#your-char-area, #enemies-to-attack, #defender-area, .game-btn, .game-text {
+    clear: both;
+}
+
+.game-text {
+    clear: both;
+    margin: 20px;
+}
+
+.game-btn {
+    clear: both;
+    margin: 20px;
+}
+
+/* character box */
+.char-box {
+    float: left;
+    position: relative;
+    width: 150px;
+    background-color: white;
+    border: solid 2px green;
+    text-align: center;
+}
+
+.char-img {
+    height: 80px;
+    width: 110px;
+    background-color: black;
+}
+
+
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Star Wars RPG</title>
+
+    <!-- Added link to the jQuery Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+    <h1 id="game-title">Star Wars RPG!</h1>
+    
+    <div id="char-gallery">
+        <div id="char-group">
+            <!-- Obi-Wan Kenobi -->
+            <div id="obi-wan-kenobi" class="char-box">
+                <h4 class="name">Obi-Wan Kenobi</h4>
+                <img class="char-img"> 
+                <h4 class="health">120</h4>
+            </div>
+            <!-- Luke Skywalker -->
+            <div id="luke-skywalker" class="char-box">
+                <h4 class="name">Luke Skywalker</h4>
+                <img class="char-img"> 
+                <h4 class="health">100</h4>
+            </div>
+            <!-- Darth Sidious -->
+            <div id="darth-sidious" class="char-box">
+                <h4 class="name">Darth Sidious</h4>
+                <img class="char-img"> 
+                <h4 class="health">150</h4>
+            </div>
+            <!-- Darth Maul -->
+            <div id="darth-maul" class="char-box">
+                <h4 class="name">Darth Maul</h4>
+                <img class="char-img"> 
+                <h4 class="health">180</h4>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div id="your-char-area">
+        <h2 class="game-text">Your Character</h2>
+        <!-- empty on game start -->
+    </div>
+    <br>
+    <div id="enemies-to-attack">
+        <h2 class="game-text">Enemies Available To Attack</h2>
+        <!-- empty on game start -->
+    </div>
+    <br>
+    <h2 id="fight-section"></h2>
+    <br>
+    <button id="attack-btn" class="game-btn">Attack</button>
+    <br>
+    <div id="defender-area">
+        <h2 class="game-text">Defender</h2>
+        <!-- empty on game start -->
+    </div>
+    <br>
+    <!-- reset button invisible on game start -->
+    <button id="reset-btn" class="game-btn">Reset</button>
+
+    <!-- custom javascript for game mechanics -->
+    <script type="text/javascript" src="./assets/javascript/game.js"></script>
+</body>
+</html>
