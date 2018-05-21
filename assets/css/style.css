@@ -20,7 +20,7 @@
 }
 
 /* character box */
-.char-box {
+.char {
     float: left;
     position: relative;
     width: 150px;
