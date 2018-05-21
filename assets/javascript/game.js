@@ -17,13 +17,14 @@ $(document).ready(function() {
     var lukeSkywalker = new Player("Luke Skywalker", 100, 5);
     var darthSidious = new Player("Darth Sidious", 150, 20);
     var darthMaul = new Player("Darth Maul", 180, 25);
+    var jarJarBinks = new Player("Jar Jar Binks", 190, 28);
 
     // ----- state variables ---------
     var playerSelected = false; 
     var enemySelected = false;
     var attackPower = 1; // increments by 1 after every attack
     
-    var enemiesLeft = 3;
+    var enemiesLeft = 4;
 
     // reference to Player object
     var userPlayer;
@@ -34,6 +35,8 @@ $(document).ready(function() {
     var enemyElem; 
 
     // ----- main logic -----
+    // hide reset button on game start
+    $("#reset-btn").hide();
 
     $("#attack-btn").on("click", function() {
         // fight logic here
@@ -71,8 +74,11 @@ $(document).ready(function() {
                 attackPower++;        
         } else if (playerSelected == true && enemySelected == false){
 
-            // enemy not selected
-            setGameInfo("No enemy here.");
+            if (enemiesLeft > 0) {
+                // enemy not selected
+                setGameInfo("No enemy here.");
+            }
+    
         } else {
 
             // player not selected 
@@ -97,8 +103,16 @@ $(document).ready(function() {
             userElem.appendTo("#your-char-area");
             // move other players to enemeies-to-attack
             $("#char-group").appendTo("#enemies-to-attack");
+            // remove char-gallery at top of game
+            $("#char-gallery").remove();
 
-            // assign player to user
+            // change look of enemies available to attack chacter boxes
+            $("#char-group").find(".char").css({
+                'background-color' : 'red',
+                'border-color' : 'black'
+            });
+
+            // assign character to user
             userPlayer = matchFromId(userElem.attr('id'));
 
             // set user player selected flag to true
@@ -116,6 +130,13 @@ $(document).ready(function() {
 
                 // assign player to enemy
                 enemyPlayer = matchFromId(enemyElem.attr('id'));
+
+                // change look of character box
+                enemyElem.css({
+                    'background-color' : 'black',
+                    'border-color' : 'green',
+                    'color' : 'white'
+                });
 
                 // set enemy player selected flag to true
                 enemySelected = true;
@@ -141,26 +162,33 @@ $(document).ready(function() {
                 return darthSidious;
             case "darth-maul":
                 return darthMaul;
+            case "jar-jar-binks":
+                return jarJarBinks;    
             default: 
                 console.log("player could not be matched");   
         }
     }
 
     function attack() {
+
         // update user and enemy health based on attack and defending damage
-        userPlayer.health -= enemyPlayer.defendingDamage;
-        console.log("user player health: " + userPlayer.health + " after " + enemyPlayer.defendingDamage + " damage from enemy");
         enemyPlayer.health -= userPlayer.attackDamage();
         console.log("enemy player health: " + enemyPlayer.health + " after " + userPlayer.attackDamage() + " damage from user");
-
+        
+        // if enemy is not dead, commence with his attack
+        if (enemyPlayer.health >= 0) {
+            userPlayer.health -= enemyPlayer.defendingDamage;
+            console.log("user player health: " + userPlayer.health + " after " + enemyPlayer.defendingDamage + " damage from enemy");
+        }
+        
         // update character boxes
-        userElem.find("health").text(userPlayer.health);
-
+        userElem.find(".health").text(userPlayer.health);
+        enemyElem.find(".health").text(enemyPlayer.health);
 
     }
 
-
     function enemyDefeated() {
+
         console.log("enemy defeated");
 
         // remove defeated enemy from defender area
@@ -175,17 +203,22 @@ $(document).ready(function() {
     }
 
     function gameWon() {
+
         console.log("game won");
         setGameInfo("You Won!!! GAME OVER!!!");
+        $("#reset-btn").show();
     }
 
     function gameLost() {
+
         console.log("game lost");
         setGameInfo("You have been defeated...GAME OVER!!!");
+        $("#reset-btn").show();
     }
     
 
     function setGameInfo(str) {
+
         $("#game-info").text(str);
     }
 

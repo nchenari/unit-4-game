@@ -1,3 +1,8 @@
+body {
+    background-image: url("../images/star-wars-background.jpg");
+    background-repeat: no-repeat;
+}
+
 #game-title {
     text-align: right;
     margin-right: 50px;
