@@ -55,7 +55,7 @@ $(document).ready(function() {
 
                     // game lost
                     gameLost();
-
+                    
                 } else if (enemyPlayer.health <= 0) { 
 
                     // current enemy defeated
@@ -100,14 +100,15 @@ $(document).ready(function() {
             userElem = $(this);
             console.log("selected user player id: " + userElem.attr('id'));
             // move selection to your-char-area
-            userElem.appendTo("#your-char-area");
+            $("#your-char-area").append(userElem);
             // move other players to enemeies-to-attack
-            $("#char-group").appendTo("#enemies-to-attack");
+            var groupElem = $("#char-group");
+            $("#enemies-to-attack").append(groupElem);
             // remove char-gallery at top of game
             $("#char-gallery").remove();
 
             // change look of enemies available to attack chacter boxes
-            $("#char-group").find(".char").css({
+            groupElem.find(".char").css({
                 'background-color' : 'red',
                 'border-color' : 'black'
             });
@@ -126,7 +127,8 @@ $(document).ready(function() {
                 enemyElem = $(this);
                 console.log("selected enemy player id: " + enemyElem.attr('id'));
                 // move to defender-area to prepare for battle
-                enemyElem.appendTo("#defender-area");
+                // var defenderElem = $("#defender-area")
+                $("#defender-area").append(enemyElem);
 
                 // assign player to enemy
                 enemyPlayer = matchFromId(enemyElem.attr('id'));
@@ -206,6 +208,7 @@ $(document).ready(function() {
 
         console.log("game won");
         setGameInfo("You Won!!! GAME OVER!!!");
+        $("#attack-btn").hide();
         $("#reset-btn").show();
     }
 
@@ -213,6 +216,7 @@ $(document).ready(function() {
 
         console.log("game lost");
         setGameInfo("You have been defeated...GAME OVER!!!");
+        $("#attack-btn").hide();
         $("#reset-btn").show();
     }
     
